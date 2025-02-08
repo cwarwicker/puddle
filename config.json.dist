@@ -1,0 +1,7 @@
+{
+    "content_path": "/path/to/dir",
+    "metadata_path": "/path/to/dir/metadata.json",
+    "tags": [],
+    "url": "http://localhost/blog",
+    "posts_per_page": 10
+}

@@ -1,0 +1,9 @@
+<section class="blog-most-recent-posts">
+    <div class="blog-most-recent-posts-heading">Recent Posts</div>
+    {% for recent in recent_posts %}
+        <div class="blog-most-recent-post">
+            <div class="blog-most-recent-post-title"><a href="{{ recent.url }}">{{ recent.title }}</a></div>
+            <div class="blog-most-recent-post-date">{{ recent.date }}</div>
+        </div>
+    {% endfor %}
+</section>

@@ -1,0 +1,43 @@
+<div class="container">
+    <div class="row">
+        <div class="col col-10">
+            {% for post in posts %}
+                <article class="blog-post-list-item">
+                    <div class="row">
+                        <div class="col col-3">
+                            {% if post.image %}
+                                <div class="blog-post-thumbnail"><img src="{{ post.image }}" alt="{{ post.title }}"></div>
+                            {% endif %}
+                        </div>
+                        <div class="col">
+                            <div class="blog-post-list-title"><a href="{{ post.url }}">{{ post.title }}</a></div>
+                            <div class="blog-post-list-date">{{ post.date }}</div>
+                            <div class="blog-post-list-content">
+                                {% if post.content|length > 150 %}
+                                    {% apply markdown_to_html %}{{ post.content|slice(0, 150) ~ '...' }}{% endapply %}
+                                {% else %}
+                                    {% apply markdown_to_html %}{{ post.content }}{% endapply %}
+                                {% endif %}
+                            </div>
+                            <p><a href="{{ post.url }}" class="blog-post-list-continue">Continue reading →</a></p>
+                        </div>
+                    </div>
+                </article>
+            {% endfor %}
+        </div>
+        <div class="col col-2">
+            {% include 'recent.twig' %}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <nav aria-label="Pages">
+                <ul class="blog-post-pagination pagination justify-content-center">
+                    {% for p in 1..pages %}
+                        <li class="page-item"><a class="page-link {% if page == p %} active {% endif %}" href="{{ url }}/page/{{ p }}">{{ p }}</a></li>
+                    {% endfor %}
+                </ul>
+            </nav>
+        </div>
+    </div>
+</div>
