@@ -2,6 +2,7 @@
 
 namespace Puddle;
 
+use Puddle\Pages\RecentPostsPage;
 use Twig\Environment;
 
 class PostList
@@ -24,26 +25,44 @@ class PostList
     }
 
     /**
+     * Get the posts in the list
+     * @return array
+     */
+    public function posts(): array {
+        return $this->posts;
+    }
+
+    /**
      * Filter the posts by page. This is done by the start number and the number per page.
      * @param int $start
      * @return array
      */
-    protected function filterPosts(int $start): array {
+    public function filterPosts(int $start): array {
         return array_slice(array_reverse($this->posts), $start, $this->config->posts_per_page);
     }
 
-    public function getDisplay(Environment $twig, int $page = 1): string {
+    public function getDisplay(Environment $twig, int $page = 1, string $title = ''): string {
 
         $count = count($this->posts);
+        $totalPages = (int)(($count > 0) ? ceil($count / $this->config->posts_per_page) : 1);
+
+        // If we ask for a page greater than we have, set to the last page.
+        if ($page > $totalPages) {
+            $page = $totalPages;
+        }
+
         $start = ($page * $this->config->posts_per_page) - $this->config->posts_per_page;
+
         $posts = $this->filterPosts($start);
+        $recent = new RecentPostsPage(config: $this->config);
 
         $data = [
             'url' => $this->config->url,
             'posts' => $posts,
-//            'recent_posts' => $this->getMostRecentPosts(),
-            'pages' => ($count > 0) ? ceil($count / $this->config->posts_per_page) : 1,
+            'recent_posts' => $recent->getSidebarPosts(),
+            'pages' => $totalPages,
             'page' => $page,
+            'title' => $title,
         ];
 
         return $twig->render('list.twig', $data);

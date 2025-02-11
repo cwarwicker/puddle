@@ -1,5 +1,6 @@
 <div class="container">
     <div class="row">
+        <div class="blog-page-heading">{{ title|raw }}</div>
         <div class="col col-10">
             {% for post in posts %}
                 <article class="blog-post-list-item">
@@ -14,9 +15,9 @@
                             <div class="blog-post-list-date">{{ post.date }}</div>
                             <div class="blog-post-list-content">
                                 {% if post.content|length > 150 %}
-                                    {% apply markdown_to_html %}{{ post.content|slice(0, 150) ~ '...' }}{% endapply %}
+                                    {{ post.description()|slice(0, 150) ~ '...' }}
                                 {% else %}
-                                    {% apply markdown_to_html %}{{ post.content }}{% endapply %}
+                                    {{ post.description() }}
                                 {% endif %}
                             </div>
                             <p><a href="{{ post.url }}" class="blog-post-list-continue">Continue reading →</a></p>

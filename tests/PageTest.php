@@ -214,11 +214,13 @@ class PageTest extends TestCase
         $this->assertStringContainsString('Test Post 8', $content);
         $this->assertStringContainsString('Test Post 7', $content);
         $this->assertStringContainsString('Test Post 6', $content);
-        $content = $page->getDisplay(page: 2);
+        $page = RecentPostsPage::load(config: $this->config, page: 2);
+        $content = $page->getDisplay();
         $this->assertStringContainsString('Test Post 5', $content);
         $this->assertStringContainsString('Test Post 4', $content);
         $this->assertStringContainsString('Test Post 3', $content);
-        $content = $page->getDisplay(page: 3);
+        $page = RecentPostsPage::load(config: $this->config, page: 3);
+        $content = $page->getDisplay();
         $this->assertStringContainsString('Test Post 2', $content);
         $this->assertStringContainsString('Test Post 1', $content);
 

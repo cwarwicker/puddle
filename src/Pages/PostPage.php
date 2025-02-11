@@ -68,10 +68,11 @@ class PostPage extends Page
      */
     public function getDisplay(): string {
 
+        $recent = new RecentPostsPage(config: $this->config);
         $data = [
             'url' => $this->config->url,
             'post' => $this->post,
-//            'recent_posts' => $this->getMostRecentPosts(),
+            'recent_posts' => $recent->getSidebarPosts(),
         ];
 
         return $this->twig()->render('post.twig', $data);

@@ -55,10 +55,10 @@ class ConfigTest extends TestCase
 
         $path = __DIR__ . '/fixtures/config.json';
         $Config = Config::load($path);
-        $this->assertEquals('/app/data', $Config->content_path);
+        $this->assertEquals('/app/blog/tests/fixtures', $Config->content_path);
         $this->assertEquals('metadata.json', $Config->metadata_file);
         $this->assertEquals('https://mywebsite.com/blog', $Config->url);
-        $this->assertEquals(5, $Config->posts_per_page);
+        $this->assertEquals(3, $Config->posts_per_page);
         $this->assertEquals(['tag-1', 'tag-2'], $Config->tags);
 
     }

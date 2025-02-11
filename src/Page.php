@@ -32,6 +32,14 @@ abstract class Page
     }
 
     /**
+     * Get the title heading for the page
+     * @return string
+     */
+    protected function title(): string {
+        return '';
+    }
+
+    /**
      * Get the Config object which was loaded into the page
      * @return Config
      */
@@ -51,7 +59,9 @@ abstract class Page
         } else if (isset($_GET['p1']) && $_GET['p1'] === 'tag') {
             return TagPage::load(config: $config);
         } else {
-            return RecentPostsPage::load(config: $config);
+            $page = (isset($_GET['p1']) && $_GET['p1'] === 'page' && isset($_GET['p2']) && ctype_digit($_GET['p2'])) ?
+                $_GET['p2'] : 1;
+            return RecentPostsPage::load(config: $config, page: $page);
         }
 
     }

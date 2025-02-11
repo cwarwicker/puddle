@@ -26,6 +26,14 @@ class TagPage extends Page
     }
 
     /**
+     * Get the title heading for the page
+     * @return string
+     */
+    protected function title(): string {
+        return 'Tagged with <strong>' . $this->tag . '</strong>';
+    }
+
+    /**
      * Get the tag we are searching for
      * @return string
      */
@@ -91,7 +99,7 @@ class TagPage extends Page
             $PostList->add(post: $post);
         }
 
-        return $PostList->getDisplay(twig: $this->twig(), page: $page);
+        return $PostList->getDisplay(twig: $this->twig(), page: $page, title: $this->title());
 
     }
 
