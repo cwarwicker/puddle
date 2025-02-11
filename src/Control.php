@@ -296,7 +296,7 @@ class Control
 
     }
 
-    public function renderList(int $page = 1, array $posts = []): string {
+    public function getList(int $page = 1, array $posts = []): array {
 
         if (empty($posts)) {
             $count = count($this->posts);
@@ -318,7 +318,7 @@ class Control
             'page' => $page,
         ];
 
-        return $twig->render('list.twig', $data);
+        return ['content' => $twig->render('list.twig', $data), 'meta' => []];
 
     }
 
@@ -377,7 +377,7 @@ class Control
      * @throws RuntimeError
      * @throws SyntaxError
      */
-    public function render(int $postID): string {
+    public function getDisplay(int $postID): array {
 
         // Get the post.
         $post = $this->getPost($postID);
@@ -392,10 +392,20 @@ class Control
             'recent_posts' => $this->getMostRecentPosts(),
         ];
 
-        return $twig->render('post.twig', $data);
+        return ['content' => $twig->render('post.twig', $data), 'meta' => $this->getPostMetaTags($post)];
 
     }
 
+    private function getPostMetaTags(stdClass $post): array {
+        return [
+            'title' => $post->title,
+            'og:title' => $post->title,
+            'og:description' => substr($post->content, 0, 50),
+            'og:image' => $post->image ?? '',
+            'og:url' => $post->url,
+            'og:type' => 'article',
+        ];
+    }
 
     /**
      * Load data from a given JSON file.

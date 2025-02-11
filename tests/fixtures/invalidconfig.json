@@ -1,0 +1,5 @@
+{
+  "content_path": "/app/data",
+  "posts_per_page": 5,
+  "invalid": "test"
+}
