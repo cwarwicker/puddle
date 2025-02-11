@@ -16,20 +16,27 @@ class TagPage extends Page
     protected string $tag = '';
 
     /**
+     * @var int Which page number we are on
+     */
+    protected int $page = 1;
+
+    /**
      * Construct the TagPage object
      * @param string $tag
+     * @param int $page
      * @param Config $config
      */
-    public function __construct(string $tag, Config $config) {
+    public function __construct(string $tag, int $page, Config $config) {
         parent::__construct($config);
         $this->tag = $tag;
+        $this->page = $page;
     }
 
     /**
      * Get the title heading for the page
      * @return string
      */
-    protected function title(): string {
+    public function title(): string {
         return 'Tagged with <strong>' . $this->tag . '</strong>';
     }
 
@@ -44,12 +51,13 @@ class TagPage extends Page
     /**
      * Load the TagPage for the given tag name
      * @param Config $config
+     * @param int $page
      * @return TagPage|RecentPostsPage
      */
-    public static function load(Config $config): TagPage|RecentPostsPage {
+    public static function load(Config $config, string $tag = null, int $page = 1): TagPage|RecentPostsPage {
 
-        if (isset($_GET['p2']) && strlen($_GET['p2'])) {
-            return new TagPage(tag: $_GET['p2'], config: $config);
+        if ($tag) {
+            return new TagPage(tag: $tag, page: $page, config: $config);
         } else {
             return new RecentPostsPage(config: $config);
         }
@@ -73,7 +81,7 @@ class TagPage extends Page
      * Get the URL for searching by this tag
      * @return string
      */
-    protected function url(): string {
+    public function url(): string {
         return $this->config->url . '/tag/' . $this->tag;
     }
 
@@ -87,10 +95,9 @@ class TagPage extends Page
 
     /**
      * Get the HTML content of the TagPage
-     * @param int $page
      * @return string
      */
-    public function getDisplay(int $page = 1): string {
+    public function getDisplay(): string {
 
         // Get the posts with this tag.
         $posts = $this->getPosts();
@@ -99,7 +106,7 @@ class TagPage extends Page
             $PostList->add(post: $post);
         }
 
-        return $PostList->getDisplay(twig: $this->twig(), page: $page, title: $this->title());
+        return $PostList->getDisplay(twig: $this->twig(), page: $this, pageNumber: $this->page);
 
     }
 

@@ -41,28 +41,38 @@ class PostList
         return array_slice(array_reverse($this->posts), $start, $this->config->posts_per_page);
     }
 
-    public function getDisplay(Environment $twig, int $page = 1, string $title = ''): string {
+    /**
+     * Get the HTML content of a list of posts to render
+     * @param Environment $twig
+     * @param Page $page
+     * @param int $pageNumber
+     * @return string
+     * @throws \Twig\Error\LoaderError
+     * @throws \Twig\Error\RuntimeError
+     * @throws \Twig\Error\SyntaxError
+     */
+    public function getDisplay(Environment $twig, Page $page, int $pageNumber = 1): string {
 
         $count = count($this->posts);
         $totalPages = (int)(($count > 0) ? ceil($count / $this->config->posts_per_page) : 1);
 
         // If we ask for a page greater than we have, set to the last page.
-        if ($page > $totalPages) {
-            $page = $totalPages;
+        if ($pageNumber > $totalPages) {
+            $pageNumber = $totalPages;
         }
 
-        $start = ($page * $this->config->posts_per_page) - $this->config->posts_per_page;
+        $start = ($pageNumber * $this->config->posts_per_page) - $this->config->posts_per_page;
 
         $posts = $this->filterPosts($start);
         $recent = new RecentPostsPage(config: $this->config);
 
         $data = [
-            'url' => $this->config->url,
+            'url' => $page->url(),
             'posts' => $posts,
             'recent_posts' => $recent->getSidebarPosts(),
             'pages' => $totalPages,
-            'page' => $page,
-            'title' => $title,
+            'page' => $pageNumber,
+            'title' => $page->title(),
         ];
 
         return $twig->render('list.twig', $data);

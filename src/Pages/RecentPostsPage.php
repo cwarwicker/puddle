@@ -82,7 +82,7 @@ class RecentPostsPage extends Page
             $PostList->add(post: $post);
         }
 
-        return $PostList->getDisplay(twig: $this->twig(), page: $this->page);
+        return $PostList->getDisplay(twig: $this->twig(), page: $this, pageNumber: $this->page);
 
     }
 }

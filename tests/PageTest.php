@@ -137,8 +137,7 @@ class PageTest extends TestCase
     public function testTagPageMetadata(): void {
 
         unset($_GET);
-        $_GET['p2'] = 'test';
-        $page = TagPage::load(config: $this->config);
+        $page = TagPage::load(config: $this->config, tag: 'test');
         $this->assertEquals('test', $page->metadata()['og:title']);
         $this->assertEquals('All posts tagged with test', $page->metadata()['og:description']);
         $this->assertEquals('https://mywebsite.com/blog/tag/test', $page->metadata()['og:url']);
@@ -153,8 +152,7 @@ class PageTest extends TestCase
     public function testTagPagePosts(): void {
 
         unset($_GET);
-        $_GET['p2'] = 'tag-1';
-        $page = TagPage::load(config: $this->config);
+        $page = TagPage::load(config: $this->config, tag: 'tag-1');
         $posts = $page->getPosts();
         $this->assertCount(5, $posts);
         $this->assertEquals('Test Post 1', $posts[0]->title());
@@ -175,14 +173,25 @@ class PageTest extends TestCase
     public function testTagPageGetDisplay(): void {
 
         unset($_GET);
-        $_GET['p2'] = 'tag-1';
-        $page = TagPage::load(config: $this->config);
+        $page = TagPage::load(config: $this->config, tag: 'tag-1');
         $content = $page->getDisplay();
         $this->assertStringContainsString('Test Post 8', $content);
         $this->assertStringContainsString('Test Post 7', $content);
         $this->assertStringContainsString('Test Post 6', $content);
-        $content = $page->getDisplay(page: 2);
+        $page = TagPage::load(config: $this->config, tag: 'tag-1', page: 2);
+        $content = $page->getDisplay();
         $this->assertStringContainsString('Test Post 3', $content);
+
+    }
+
+    /**
+     * Test that if we try to load the tag page but forget the tag, it reverts to RecentPostsPage.
+     * @return void
+     */
+    public function testMissingTagRevertsToRecentPostsPage(): void {
+
+        $page = TagPage::load(config: $this->config);
+        $this->assertEquals(RecentPostsPage::class, get_class($page));
 
     }
 

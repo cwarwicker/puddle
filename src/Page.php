@@ -35,7 +35,7 @@ abstract class Page
      * Get the title heading for the page
      * @return string
      */
-    protected function title(): string {
+    public function title(): string {
         return '';
     }
 
@@ -48,6 +48,14 @@ abstract class Page
     }
 
     /**
+     * Get the default url for the site
+     * @return string
+     */
+    public function url(): string {
+        return $this->config->url;
+    }
+
+    /**
      * Work out which page we want to display, based on url query string.
      * @return Page
      */
@@ -57,7 +65,10 @@ abstract class Page
         if (isset($_GET['p1']) && ctype_digit($_GET['p1'])) {
             return PostPage::load(postID: $_GET['p1'], config: $config);
         } else if (isset($_GET['p1']) && $_GET['p1'] === 'tag') {
-            return TagPage::load(config: $config);
+            $tag = (isset($_GET['p2']) && strlen($_GET['p2'])) ? $_GET['p2'] : null;
+            $page = (isset($_GET['p3']) && $_GET['p3'] === 'page' && isset($_GET['p4']) && ctype_digit($_GET['p4'])) ?
+                $_GET['p4'] : 1;
+            return TagPage::load(config: $config, tag: $tag, page: $page);
         } else {
             $page = (isset($_GET['p1']) && $_GET['p1'] === 'page' && isset($_GET['p2']) && ctype_digit($_GET['p2'])) ?
                 $_GET['p2'] : 1;
