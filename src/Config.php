@@ -15,6 +15,8 @@ class Config
     public array $tags = [];
     public string $url = '';
     public int $posts_per_page = 0;
+    public string $site_title = '';
+    public string $site_description = '';
 
     /**
      * Construct the Config object with the data supplied.

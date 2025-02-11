@@ -104,7 +104,19 @@ class Post
     public static function getByTag(string $tag, Config $config): array {
 
         $metadata = Metadata::load(config: $config);
-        $postdata = $metadata->getByTag($tag);
+        $postdata = $metadata->getByTag(tag: $tag);
+        $return = [];
+        foreach ($postdata as $post) {
+            $return[] = new Post(data: $post, config: $config);
+        }
+        return $return;
+
+    }
+
+    public static function getRecent(Config $config): array {
+
+        $metadata = Metadata::load(config: $config);
+        $postdata = $metadata->all();
         $return = [];
         foreach ($postdata as $post) {
             $return[] = new Post(data: $post, config: $config);

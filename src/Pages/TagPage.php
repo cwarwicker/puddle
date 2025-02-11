@@ -79,18 +79,19 @@ class TagPage extends Page
 
     /**
      * Get the HTML content of the TagPage
+     * @param int $page
      * @return string
      */
-    public function getDisplay(): string {
+    public function getDisplay(int $page = 1): string {
 
         // Get the posts with this tag.
-        $posts = Post::getByTag(tag: $this->tag, config: $this->config);
+        $posts = $this->getPosts();
         $PostList = new PostList(config: $this->config);
         foreach ($posts as $post) {
             $PostList->add(post: $post);
         }
 
-        return $PostList->getDisplay(twig: $this->twig());
+        return $PostList->getDisplay(twig: $this->twig(), page: $page);
 
     }
 

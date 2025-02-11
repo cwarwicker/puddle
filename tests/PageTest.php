@@ -4,6 +4,7 @@ use PHPUnit\Framework\TestCase;
 use Puddle\Config;
 use Puddle\Page;
 use Puddle\Pages\PostPage;
+use Puddle\Pages\RecentPostsPage;
 use Puddle\Pages\TagPage;
 
 require_once __DIR__ . '/../vendor/autoload.php';
@@ -155,11 +156,12 @@ class PageTest extends TestCase
         $_GET['p2'] = 'tag-1';
         $page = TagPage::load(config: $this->config);
         $posts = $page->getPosts();
-        $this->assertCount(4, $posts);
+        $this->assertCount(5, $posts);
         $this->assertEquals('Test Post 1', $posts[0]->title());
         $this->assertEquals('Test Post 3', $posts[1]->title());
         $this->assertEquals('Test Post 6', $posts[2]->title());
         $this->assertEquals('Test Post 7', $posts[3]->title());
+        $this->assertEquals('Test Post 8', $posts[4]->title());
 
     }
 
@@ -176,11 +178,65 @@ class PageTest extends TestCase
         $_GET['p2'] = 'tag-1';
         $page = TagPage::load(config: $this->config);
         $content = $page->getDisplay();
-        $this->assertStringContainsString('Test Post 1', $content);
-        $this->assertStringContainsString('Test Post 3', $content);
-        $this->assertStringContainsString('Test Post 6', $content);
+        $this->assertStringContainsString('Test Post 8', $content);
         $this->assertStringContainsString('Test Post 7', $content);
+        $this->assertStringContainsString('Test Post 6', $content);
+        $content = $page->getDisplay(page: 2);
+        $this->assertStringContainsString('Test Post 3', $content);
 
     }
+
+    /**
+     * Test that the correct posts are returned when getting the most recent posts
+     * @return void
+     */
+    public function testRecentPostsPagePosts(): void {
+
+        $page = RecentPostsPage::load(config: $this->config);
+        $posts = $page->getPosts();
+
+        // The $page->getPosts() actually returns ALL the posts and they are filtered later by the PostList.
+        $this->assertCount(8, $posts);
+
+    }
+
+    /**
+     * Test that the getDisplay function for RecentPostsPage returns the expected HTML content
+     * @return void
+     * @throws \Twig\Error\LoaderError
+     * @throws \Twig\Error\RuntimeError
+     * @throws \Twig\Error\SyntaxError
+     */
+    public function testRecentPostsPageGetDisplayPagination(): void {
+
+        $page = RecentPostsPage::load(config: $this->config);
+        $content = $page->getDisplay();
+        $this->assertStringContainsString('Test Post 8', $content);
+        $this->assertStringContainsString('Test Post 7', $content);
+        $this->assertStringContainsString('Test Post 6', $content);
+        $content = $page->getDisplay(page: 2);
+        $this->assertStringContainsString('Test Post 5', $content);
+        $this->assertStringContainsString('Test Post 4', $content);
+        $this->assertStringContainsString('Test Post 3', $content);
+        $content = $page->getDisplay(page: 3);
+        $this->assertStringContainsString('Test Post 2', $content);
+        $this->assertStringContainsString('Test Post 1', $content);
+
+    }
+
+    /**
+     * Test that the correct metadata tags are returned by the RecentPostsPage.
+     * @return void
+     */
+    public function testRecentPostsPageMetadata(): void {
+
+        $page = RecentPostsPage::load(config: $this->config);
+        $this->assertEquals('My blog', $page->metadata()['og:title']);
+        $this->assertEquals('This is my blog', $page->metadata()['og:description']);
+        $this->assertEquals('https://mywebsite.com/blog', $page->metadata()['og:url']);
+        $this->assertEquals('website', $page->metadata()['og:type']);
+
+    }
+
 
 }
