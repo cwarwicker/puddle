@@ -60,7 +60,9 @@ class PostPage extends Page
     public function metadata(): array {
         return [
             'og:title' => $this->post->title(),
+            'title' => $this->post->title(),
             'og:description' => $this->post->description(),
+            'description' => $this->post->description(),
             'og:image' => $this->post->image(),
             'og:url' => $this->post->url(),
             'og:type' => 'article',

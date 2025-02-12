@@ -71,7 +71,9 @@ class TagPage extends Page
     public function metadata(): array {
         return [
             'og:title' => $this->tag,
+            'title' => $this->tag,
             'og:description' => 'All posts tagged with ' . $this->tag,
+            'description' => 'All posts tagged with ' . $this->tag,
             'og:url' => $this->url(),
             'og:type' => 'article',
         ];

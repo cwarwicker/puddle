@@ -43,7 +43,9 @@ class RecentPostsPage extends Page
     public function metadata(): array {
         return [
             'og:title' => $this->config()->site_title,
+            'title' => $this->config()->site_title,
             'og:description' => $this->config()->site_description,
+            'description' => $this->config()->site_description,
             'og:url' => $this->config()->url,
             'og:type' => 'website',
         ];
