@@ -36,6 +36,14 @@ class PostPage extends Page
     }
 
     /**
+     * Get the title heading for the page
+     * @return string
+     */
+    public function title(): string {
+        return $this->post->title();
+    }
+
+    /**
      * Load the PostPage for the given post ID
      * @param int $postID
      * @param Config $config

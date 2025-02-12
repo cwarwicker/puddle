@@ -25,6 +25,7 @@ class PageTest extends TestCase
 
     /**
      * Test that if the "p1" query string property is "tag" but the tag name is missing, we load the RecentPosts page.
+     * @covers Page::which
      * @return void
      */
     public function testLoadTagPageWithMissingTag(): void {
@@ -38,6 +39,7 @@ class PageTest extends TestCase
 
     /**
      * Test that if the "p1" query string property is "tag" and the "p2" contains a string, then we load the Tag page.
+     * @covers Page::which
      * @return void
      */
     public function testLoadTagPage(): void {
@@ -53,6 +55,7 @@ class PageTest extends TestCase
 
     /**
      * Test that if the query string is empty then we load the RecentPosts page.
+     * @covers Page::which
      * @return void
      */
     public function testLoadRecentPostsPage(): void {
@@ -65,6 +68,7 @@ class PageTest extends TestCase
 
     /**
      * Test that the page has the correct Config loaded
+     * @covers Page::which
      * @return void
      */
     public function testPageHasCorrectConfig(): void {
@@ -77,6 +81,7 @@ class PageTest extends TestCase
 
     /**
      * Test loading the PostPage with an invalid post
+     * @covers PostPage::load
      * @return void
      */
     public function testPostPageInvalidPost(): void {
@@ -89,6 +94,7 @@ class PageTest extends TestCase
 
     /**
      * Test loading the PostPage with a valid post
+     * @covers PostPage::load
      * @return void
      */
     public function testPostPageValidPost(): void {
@@ -103,6 +109,7 @@ class PageTest extends TestCase
 
     /**
      * Test that the correct metadata tags are returned by the PostPage.
+     * @covers PostPage::metadata
      * @return void
      */
     public function testPostPageMetadataTags(): void {
@@ -118,6 +125,7 @@ class PageTest extends TestCase
 
     /**
      * Test that the getDisplay function for PostPage returns the expected HTML content
+     * @covers PostPage::getDisplay
      * @return void
      * @throws \Twig\Error\LoaderError
      * @throws \Twig\Error\RuntimeError
@@ -131,7 +139,58 @@ class PageTest extends TestCase
     }
 
     /**
+     * Test the post object returned by the PostPage
+     * @covers PostPage::post
+     * @return void
+     */
+    public function testPostPagePost(): void {
+
+        $page = PostPage::load(postID: 1, config: $this->config);
+        $this->assertEquals('Test Post 1', $page->post()->title());
+
+    }
+
+    /**
+     * Test the title of the PostPage
+     * @covers PostPage::title
+     * @return void
+     */
+    public function testPostPageTitle(): void {
+
+        $page = PostPage::load(postID: 1, config: $this->config);
+        $this->assertEquals('Test Post 1', $page->title());
+
+    }
+
+    /**
+     * Test the title of the TagPage
+     * @covers TagPage::title
+     * @return void
+     */
+    public function testTagPageTitle(): void {
+
+        unset($_GET);
+        $page = TagPage::load(config: $this->config, tag: 'test');
+        $this->assertEquals("Tagged with <strong>test</strong>", $page->title());
+
+    }
+
+    /**
+     * Test the tag value of the TagPage
+     * @covers TagPage::getTag
+     * @return void
+     */
+    public function testTagPageGetTag(): void {
+
+        unset($_GET);
+        $page = TagPage::load(config: $this->config, tag: 'test');
+        $this->assertEquals('test', $page->getTag());
+
+    }
+
+    /**
      * Test that the correct metadata tags are returned by the PostPage.
+     * @covers TagPage::metadata
      * @return void
      */
     public function testTagPageMetadataTags(): void {
@@ -147,9 +206,10 @@ class PageTest extends TestCase
 
     /**
      * Test that the correct posts are returned when searching by tag
+     * @covers TagPage::getPosts
      * @return void
      */
-    public function testTagPagePosts(): void {
+    public function testTagPageGetPosts(): void {
 
         unset($_GET);
         $page = TagPage::load(config: $this->config, tag: 'tag-1');
@@ -165,6 +225,7 @@ class PageTest extends TestCase
 
     /**
      * Test that the getDisplay function for TagPage returns the expected HTML content
+     * @covers TagPage::getDisplay
      * @return void
      * @throws \Twig\Error\LoaderError
      * @throws \Twig\Error\RuntimeError
@@ -186,6 +247,7 @@ class PageTest extends TestCase
 
     /**
      * Test that if we try to load the tag page but forget the tag, it reverts to RecentPostsPage.
+     * @covers TagPage::load
      * @return void
      */
     public function testMissingTagRevertsToRecentPostsPage(): void {
@@ -196,7 +258,21 @@ class PageTest extends TestCase
     }
 
     /**
+     * Test url returned for the TagPage.
+     * @covers TagPage::url
+     * @return void
+     */
+    public function testTagPageUrl(): void {
+
+        unset($_GET);
+        $page = TagPage::load(config: $this->config, tag: 'tag-1');
+        $this->assertEquals($this->config->url . '/tag/tag-1', $page->url());
+
+    }
+
+    /**
      * Test that the correct posts are returned when getting the most recent posts
+     * @covers RecentPostsPage::load
      * @return void
      */
     public function testRecentPostsPagePosts(): void {
@@ -210,7 +286,47 @@ class PageTest extends TestCase
     }
 
     /**
+     * Test that the correct metadata tags are returned by the RecentPostsPage.
+     * @covers RecentPostsPage::load
+     * @return void
+     */
+    public function testRecentPostsPageMetadataTags(): void {
+
+        $page = RecentPostsPage::load(config: $this->config);
+        $this->assertEquals('My blog', $page->metadata()['og:title']);
+        $this->assertEquals('This is my blog', $page->metadata()['og:description']);
+        $this->assertEquals('https://mywebsite.com/blog', $page->metadata()['og:url']);
+        $this->assertEquals('website', $page->metadata()['og:type']);
+
+    }
+
+    /**
+     * Test that the correct posts are returned
+     * @covers RecentPostsPage::getPosts
+     * @return void
+     */
+    public function testRecentPostsPageGetPosts(): void {
+
+        $page = RecentPostsPage::load(config: $this->config);
+        $this->assertCount(8, $page->getPosts());
+
+    }
+
+    /**
+     * Test that the correct posts are returned
+     * @covers RecentPostsPage::getSidebarPosts
+     * @return void
+     */
+    public function testRecentPostsPageGetSidebarPosts(): void {
+
+        $page = RecentPostsPage::load(config: $this->config);
+        $this->assertCount(3, $page->getSidebarPosts());
+
+    }
+
+    /**
      * Test that the getDisplay function for RecentPostsPage returns the expected HTML content
+     * @covers RecentPostsPage::getDisplay
      * @return void
      * @throws \Twig\Error\LoaderError
      * @throws \Twig\Error\RuntimeError
@@ -232,20 +348,6 @@ class PageTest extends TestCase
         $content = $page->getDisplay();
         $this->assertStringContainsString('Test Post 2', $content);
         $this->assertStringContainsString('Test Post 1', $content);
-
-    }
-
-    /**
-     * Test that the correct metadata tags are returned by the RecentPostsPage.
-     * @return void
-     */
-    public function testRecentPostsPageMetadataTags(): void {
-
-        $page = RecentPostsPage::load(config: $this->config);
-        $this->assertEquals('My blog', $page->metadata()['og:title']);
-        $this->assertEquals('This is my blog', $page->metadata()['og:description']);
-        $this->assertEquals('https://mywebsite.com/blog', $page->metadata()['og:url']);
-        $this->assertEquals('website', $page->metadata()['og:type']);
 
     }
 
