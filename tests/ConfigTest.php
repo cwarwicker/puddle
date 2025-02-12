@@ -10,6 +10,7 @@ class ConfigTest extends TestCase
 
     /**
      * Test passing an invalid file path when loading Config object
+     * @covers Config::load
      * @return void
      */
     public function testLoadInvalidPath(): void {
@@ -23,6 +24,7 @@ class ConfigTest extends TestCase
 
     /**
      * Test passing an invalid file when loading Config object
+     * @covers Config::load
      * @return void
      */
     public function testLoadInvalidJSONFile(): void {
@@ -36,6 +38,7 @@ class ConfigTest extends TestCase
 
     /**
      * Test passing a JSON file with unsupported properties when loading the Config object
+     * @covers Config::load
      * @return void
      */
     public function testLoadInvalidDataFile(): void {
@@ -49,6 +52,7 @@ class ConfigTest extends TestCase
 
     /**
      * Test passing a valid file when loading Config object
+     * @covers Config::load
      * @return void
      */
     public function testLoadConfigFile(): void {
