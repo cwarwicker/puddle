@@ -6,6 +6,9 @@ use InvalidArgumentException;
 use RuntimeException;
 use stdClass;
 
+/**
+ * Class for handling the metadata file which contains all the post information
+ */
 class Metadata
 {
 
@@ -43,6 +46,14 @@ class Metadata
             })->id;
         }
 
+    }
+
+    /**
+     * Get the latest post ID
+     * @return int
+     */
+    public function getLatestID(): int {
+        return $this->latestID;
     }
 
     /**
@@ -90,11 +101,11 @@ class Metadata
     }
 
     /**
-     * Add a new post to the system.
+     * Add a new post to the array.
      * @param stdClass $post
-     * @return int|false
+     * @return int
      */
-    public function add(stdClass $post): int|false {
+    public function add(stdClass $post): int {
 
         // Get the ID for the new post.
         $post->id = ++$this->latestID;
@@ -102,27 +113,24 @@ class Metadata
         // Append the post to the data array.
         $this->data[] = $post;
 
-        $result = $this->save();
-        if ($result) {
+        // Update the latest post ID on the metadata object.
+        $this->latestID = $post->id;
 
-            // Update the latest post ID on the metadata object.
-            $this->latestID = $post->id;
-
-            // Create the content file.
-            $result = $result && Post::createFile(id: $post->id, config: $this->config);
-
-        }
-
-        return ($result) ? $this->latestID : false;
+        return $this->latestID;
 
     }
 
-    public function delete(int $postID): bool {
+    /**
+     * Delete a post from the array
+     * @param int $postID
+     * @return true
+     */
+    public function delete(int $postID): true {
 
         // Filter out the post with this ID.
         $this->data = (array_values(array_filter($this->data, fn($obj) => $obj->id != $postID)));
 
-        return $this->save();
+        return true;
 
     }
 
@@ -130,10 +138,10 @@ class Metadata
      * Save the metadata file
      * @return bool
      */
-    protected function save(): bool {
+    public function save(): bool {
 
         // Try and open the file for writing.
-        $file = $this->config->content_path . DIRECTORY_SEPARATOR . $this->config->metadata_file;
+        $file = $this->config->metadata_file;
 
         // Try and open the file for writing.
         $fh = @fopen($file, 'w');
@@ -157,11 +165,14 @@ class Metadata
      */
     public static function load(Config $config): Metadata {
 
-        $file = $config->content_path . DIRECTORY_SEPARATOR . $config->metadata_file;
+        $file = $config->metadata_file;
 
         // If the file doesn't exist, try to create it.
         if (!file_exists($file)) {
-            file_put_contents($file, '[]');
+            $result = @file_put_contents($file, '[]');
+            if (!$result) {
+                throw new RuntimeException('Cannot write to metadata file');
+            }
         }
 
         // If it still doesn't exist, then we cannot continue.

@@ -105,7 +105,7 @@ class PageTest extends TestCase
      * Test that the correct metadata tags are returned by the PostPage.
      * @return void
      */
-    public function testPostPageMetadata(): void {
+    public function testPostPageMetadataTags(): void {
 
         $page = PostPage::load(postID: 1, config: $this->config);
         $this->assertEquals('Test Post 1', $page->metadata()['og:title']);
@@ -126,7 +126,7 @@ class PageTest extends TestCase
     public function testPostPageGetDisplay(): void {
 
         $page = PostPage::load(postID: 1, config: $this->config);
-        $this->assertStringContainsString("<div class=\"blog-post-content\"><h2>Hello</h2>\n<p>This is my <em>first</em> post. It goes on a bit as I just keep talking and I don't really know when to stop.</p>\n<p>Maybe I'll do another <strong>paragraph here</strong>!</p>\n</div>\n", $page->getDisplay());
+        $this->assertStringContainsString("<div class=\"blog-post-content\"><h2>Hello</h2>\n<p>This is my first post. It goes on a bit as I just keep talking and I dont really know when to stop.</p>\n<p>Maybe I'll do <em>another</em> paragraph!</p>\n</div>\n", $page->getDisplay());
 
     }
 
@@ -134,7 +134,7 @@ class PageTest extends TestCase
      * Test that the correct metadata tags are returned by the PostPage.
      * @return void
      */
-    public function testTagPageMetadata(): void {
+    public function testTagPageMetadataTags(): void {
 
         unset($_GET);
         $page = TagPage::load(config: $this->config, tag: 'test');
@@ -239,7 +239,7 @@ class PageTest extends TestCase
      * Test that the correct metadata tags are returned by the RecentPostsPage.
      * @return void
      */
-    public function testRecentPostsPageMetadata(): void {
+    public function testRecentPostsPageMetadataTags(): void {
 
         $page = RecentPostsPage::load(config: $this->config);
         $this->assertEquals('My blog', $page->metadata()['og:title']);

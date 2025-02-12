@@ -20,11 +20,11 @@ class Config
 
     /**
      * Construct the Config object with the data supplied.
-     * @param stdClass $json
+     * @param stdClass $data
      */
-    public function __construct(stdClass $json) {
+    public function __construct(stdClass $data) {
 
-        foreach ($json as $property => $value) {
+        foreach ($data as $property => $value) {
             if (!property_exists($this, $property)) {
                 throw new UnexpectedValueException('(' . $property . ') is not a valid config.json property');
             }
@@ -51,7 +51,7 @@ class Config
             throw new InvalidArgumentException('Config file (' . $file . ') does not contain valid JSON');
         }
 
-        return new Config($json);
+        return new Config(data: $json);
 
     }
 

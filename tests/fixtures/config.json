@@ -1,6 +1,6 @@
 {
   "content_path": "/app/blog/tests/fixtures",
-  "metadata_file": "metadata.json",
+  "metadata_file": "/app/blog/tests/fixtures/metadata.json",
   "tags": ["tag-1", "tag-2"],
   "url": "https://mywebsite.com/blog",
   "posts_per_page": 3,
