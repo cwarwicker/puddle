@@ -3,7 +3,8 @@
 namespace Puddle\Commands;
 
 use Exception;
-use Puddle\Control;
+use Puddle\Config;
+use Puddle\Post;
 use RuntimeException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -14,12 +15,19 @@ use Symfony\Component\Console\Question\Question;
 class AddCommand extends Command
 {
 
-    protected Control $control;
+    /**
+     * @var Config Config object
+     */
+    protected Config $config;
 
-    public function __construct(Control $control, ?string $name = null)
-    {
-        $this->control = $control;
-        parent::__construct($name);
+    /**
+     * Construct the object
+     * @param string $name
+     * @param Config $config
+     */
+    public function __construct(string $name, Config $config) {
+        parent::__construct(name: $name);
+        $this->config = $config;
     }
 
     /**
@@ -34,9 +42,10 @@ class AddCommand extends Command
 
         $questions = [];
         $answers = [];
-        $tagOptions = array_combine($this->control->config()->tags, $this->control->config()->tags);
-
         $helper = $this->getHelper('question');
+
+        // Get the possible tags we can choose from.
+        $tagOptions = array_combine($this->config->tags, $this->config->tags);
 
         // Build the questions.
         $questions['title'] = new Question("Title of the blog post: ");
@@ -50,7 +59,7 @@ class AddCommand extends Command
         $questions['tags'] = new ChoiceQuestion("Tags: ", $tagOptions);
         $questions['tags']->setMultiselect(true);
 
-        // Allow empty input (user presses Enter)
+        // Allow empty input (user presses Enter).
         $questions['tags']->setValidator(function ($selected) use ($tagOptions) {
 
             // If we don't want any tags, that's fine.
@@ -73,15 +82,15 @@ class AddCommand extends Command
         $questions['image'] = new Question("Post image URL: ");
 
         // Get the answers.
-        $answers['title'] = $helper->ask($input, $output, $questions['title']);
+        $answers['title'] = (string)$helper->ask($input, $output, $questions['title']);
         $answers['tags'] = $helper->ask($input, $output, $questions['tags']);
-        $answers['image'] = $helper->ask($input, $output, $questions['image']);
+        $answers['image'] = (string)$helper->ask($input, $output, $questions['image']);
 
         // Add the post.
-        $result = $this->control->add(title: $answers['title'], tags: $answers['tags'], image: $answers['image']);
-        if ($result) {
+        $result = Post::add(config: $this->config, title: $answers['title'], tags: $answers['tags'], image: $answers['image']);
+        if ($result !== false) {
             $output->writeln("Post created.");
-            $output->writeln("Edit the following file to add your mark-down content: {$this->control->config()->content_path}/{$this->control->getLatestPostID()}.md");
+            $output->writeln("Edit the following file to add your mark-down content: {$this->config->content_path}/{$result}.md");
         }
 
         return ($result) ? Command::SUCCESS : Command::FAILURE;

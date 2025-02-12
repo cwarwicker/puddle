@@ -3,25 +3,37 @@
 namespace Puddle\Commands;
 
 use Exception;
-use Puddle\Control;
+use InvalidArgumentException;
+use Puddle\Config;
+use Puddle\Post;
 use RuntimeException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Question\ChoiceQuestion;
-use Symfony\Component\Console\Question\Question;
 
 class DeleteCommand extends Command
 {
 
-    protected Control $control;
+    /**
+     * @var Config Config object
+     */
+    protected Config $config;
 
-    public function __construct(Control $control, ?string $name = null) {
-        $this->control = $control;
-        parent::__construct($name);
+    /**
+     * Construct the object
+     * @param string $name
+     * @param Config $config
+     */
+    public function __construct(string $name, Config $config) {
+        parent::__construct(name: $name);
+        $this->config = $config;
     }
 
+    /**
+     * Add the arguments required for the command.
+     * @return void
+     */
     protected function configure() {
         $this->addArgument('id', InputArgument::REQUIRED, 'ID of the post to delete');
     }
@@ -38,21 +50,19 @@ class DeleteCommand extends Command
 
         $postID = $input->getArgument('id');
 
-        // Load the posts.
-        $this->control->load();
+        try {
 
-        // Find the post to remove.
-        $post = $this->control->getPost($postID);
-        if (!$post) {
-            throw new RuntimeException('Cannot find a post with ID: ' . $postID);
-        }
+            $post = Post::load($postID, $this->config);
+            $result = $post->delete();
+            if ($result) {
+                $output->writeln('Post (' . $postID . ') deleted');
+                return Command::SUCCESS;
+            } else {
+                return Command::FAILURE;
+            }
 
-        $result = $this->control->delete($postID);
-        if ($result) {
-            $output->writeln('Post (' . $postID . ') deleted');
-            return Command::SUCCESS;
-        } else {
-            return Command::FAILURE;
+        } catch (InvalidArgumentException $e) {
+            throw new RuntimeException('No such post (' . $postID . ')');
         }
 
     }

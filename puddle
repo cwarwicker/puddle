@@ -1,21 +1,14 @@
 #!/usr/bin/env php
 <?php
-use Puddle\Commands\DeleteCommand;
-use Puddle\Control;
 use Puddle\Commands\AddCommand;
+use Puddle\Commands\DeleteCommand;
+use Puddle\Config;
+use Puddle\Console;
 
 require_once __DIR__ . '/vendor/autoload.php';
 
-$config = Control::loadJSON(file: __DIR__ . '/config.json');
-$control = new Control(config: $config);
-
-if (!$control->load()) {
-    throw new Exception('Unable to open metadata file ('.$control->config()->metadata_path.'). Check directory/file permissions.');
-}
-
-$control->loadCommands([
-    new AddCommand($control, 'add'),
-    new DeleteCommand($control, 'delete'),
-]);
-
-$control->run();
+$Config = Config::load(file: __DIR__ . '/../blog.json');
+$Console = new Console(config: $Config);
+$Console->addCommand(command: new AddCommand(name: 'add', config: $Config));
+$Console->addCommand(command: new DeleteCommand(name: 'delete', config: $Config));
+$Console->run();

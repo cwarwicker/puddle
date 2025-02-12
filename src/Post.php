@@ -4,6 +4,7 @@ namespace Puddle;
 
 use DateTime;
 use InvalidArgumentException;
+use RuntimeException;
 use stdClass;
 use UnexpectedValueException;
 
@@ -84,6 +85,22 @@ class Post
     }
 
     /**
+     * Delete the post
+     * @return bool
+     */
+    public function delete(): bool {
+
+        $metadata = Metadata::load(config: $this->config);
+        $result = $metadata->delete($this->id);
+        if ($result) {
+            return static::deleteFile(id: $this->id, config: $this->config);
+        } else {
+            return false;
+        }
+
+    }
+
+    /**
      * Try to load a given post
      * @param int $id
      * @param Config $config
@@ -122,6 +139,62 @@ class Post
             $return[] = new Post(data: $post, config: $config);
         }
         return $return;
+
+    }
+
+    /**
+     * Add a new post
+     * @param Config $config
+     * @param string $title
+     * @param array $tags
+     * @param string|null $image
+     * @return int|false
+     */
+    public static function add(Config $config, string $title, array $tags, string $image = null): int|false {
+
+        $metadata = Metadata::load(config: $config);
+
+        $post = new stdClass();
+        $post->title = $title;
+        $post->tags = $tags;
+        $post->date = date('d-m-Y, H:i');
+        $post->image = $image;
+
+        return $metadata->add($post);
+
+    }
+
+    /**
+     * Create the markdown content file for the post.
+     * @param int $id
+     * @param Config $config
+     * @return bool
+     */
+    public static function createFile(int $id, Config $config): bool {
+
+        // Try and open the file for writing to create a blank file.
+        $filename = $config->content_path . '/' . $id . '.md';
+        $fh = fopen($filename, 'w');
+        if (!$fh) {
+            return false;
+        }
+
+        fclose($fh);
+
+        return true;
+
+    }
+
+    /**
+     * Delete the markdown content file for the post
+     * @param int $id
+     * @param Config $config
+     * @return bool
+     */
+    public static function deleteFile(int $id, Config $config): bool {
+
+        $filename = $config->content_path . '/' . $id . '.md';
+        return unlink($filename);
 
     }
 
