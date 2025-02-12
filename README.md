@@ -42,7 +42,7 @@ Here is an example. If you had a really basic webpage which was requiring a head
 ```php
 # Including my site header here
 
-require_once __DIR__ . '/../blog/vendor/autoload.php';
+require_once __DIR__ . '/../puddle/vendor/autoload.php';
 $Config = Config::load(file: __DIR__ . '/../blog.json');
 
 try {
