@@ -92,6 +92,120 @@ Assuming it works, Puddle should now be able to work out what page you want:
 - `/blog/tag/abc/page/2` - Page 2 of posts tagged with `abc`
 - `/blog/1/2025/04/05/my_post` - Blog post with id `1` (The rest is ignored and just to make a nice url)
 
+At this point you'll probably notice it looks rubbish. That's because the styling needs to be done. I don't make any assumptions really about how you want it to look, so everything has named classes and you can style things however you want. Check the `/templates` folder to see what classes each element has.
+
+If you want an example of styling because you can't be bothered to do it, this is what mine is at the time of writing this:
+
+```css
+
+article.blog-post,
+article.blog-post-list-item {
+  padding: 0 50px;
+  margin-bottom: 50px;
+}
+
+div.blog-post-title,
+div.blog-post-date,
+div.blog-post-tags {
+  text-align: center;
+}
+
+div.blog-post-title {
+  font-size: 24pt;
+  text-transform: uppercase;
+}
+
+div.blog-post-date {
+  font-size: 14pt;
+}
+
+div.blog-post-tags {
+  margin: 10px 0;
+}
+
+a.blog-post-tag,
+a.blog-post-list-continue {
+  display: inline-block;
+  margin: 0 10px;
+  background-color: rgb(var(--bs-primary-rgb));
+  border: none;
+  color: white;
+  padding: 4px 8px;
+  text-align: center;
+  text-decoration: none;
+}
+
+a.blog-post-list-continue {
+  margin: inherit;
+  font-size: 10pt;
+}
+
+a.blog-post-tag:hover,
+a.blog-post-list-continue:hover {
+  color: #000;
+}
+
+div.blog-most-recent-posts-heading {
+  font-size: 12pt;
+  font-weight: bold;
+  text-decoration: underline;
+}
+
+div.blog-most-recent-post {
+  margin: 10px 0;
+}
+
+div.blog-post-list-title {
+  font-size: 14pt;
+}
+
+div.blog-post-list-date {
+  font-size: 12pt;
+}
+
+div.blog-most-recent-post-title a,
+div.blog-post-list-title a {
+  text-decoration: none;
+}
+
+div.blog-most-recent-post-title a:hover,
+div.blog-post-list-title a:hover {
+  color: rgb(var(--bs-primary-rgb));
+}
+
+div.blog-most-recent-post-date {
+  color: grey;
+  font-size: 10pt;
+}
+
+div.blog-post-list-content {
+  margin-top: 25px;
+}
+
+div.blog-post-image {
+  margin: 20px 0;
+  text-align: center;
+}
+
+div.blog-post-image img {
+  width: 100%;
+}
+
+div.blog-post-thumbnail img {
+  width: 100%;
+}
+
+div.blog-page-heading {
+  font-size: 20pt;
+  text-align: center;
+}
+```
+
+Which looks a bit like this:
+
+![screenshot](screenshot.png)
+
+Do with that what you will.
 
 #### CLI Commands
 - `php puddle add` - Add a new post
