@@ -4,7 +4,6 @@ namespace Puddle;
 
 use DateTime;
 use InvalidArgumentException;
-use RuntimeException;
 use stdClass;
 use UnexpectedValueException;
 
@@ -51,6 +50,9 @@ class Post
     }
 
     public function image(): string {
+        if (strpos($this->image, '/') === 0) {
+            $this->image = $this->config->site_url . $this->image;
+        }
         return $this->image;
     }
 

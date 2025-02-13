@@ -2,6 +2,9 @@
     "content_path": "/path/to/dir",
     "metadata_file": "/path/to/dir/metadata.json",
     "tags": ["tag-1", "tag-2"],
-    "url": "http://me.localhost/blog",
-    "posts_per_page": 10
+    "url": "http://blog.me.localhost",
+    "posts_per_page": 10,
+    "site_title": "My website",
+    "site_description": "This is my website",
+    "site_url": "http://me.localhost"
 }

@@ -31,8 +31,14 @@ There are 2 types of pages in Puddle (sort of).
 - `content_path` - This is the path to the directory where you want the blog files to be created.
 - `metadata_file` - This is the full path to the file where you want the post metadata to be stored.
 - `tags` - This is an array of all the possible tags you want to be able to use on your posts.
-- `url` - This is the URL to the blog page on your site, where the content will be rendered.
-- `posts_per_page` - This is how many posts you want displayed per page when viewing a list of posts.
+- `url` - This is the URL to the blog page on your site, where the content will be rendered. This might be a subdomain like `https://blog.mywebsite.com` or a directory like `https://mywebsite.com/blog`.
+- `posts_per_page` - This is how many posts you want displayed per page when viewing a list of posts. 
+- `site_title` - This is the title of your main website to be used in <meta> title tag as a fallback.
+- `site_description` - This is the description of your main website to be used in <meta< description tag as a fallback.
+- `site_url` - This is the URL of your main website, e.g. `https://mywebsite.com`
+
+Remember when pushing this to production to change the paths and urls for your production site, obviously.
+
 5. Now you can create some posts, using the `puddle` script. Simply run `php puddle add` and follow the prompts to add a title, tags, and post image url. This will add the post to the metadata file, and also create a blank mark-down file in your `content_path` for you to add your post content to.
 6. Add your content to the `<id>.md` file which was created. This is a mark-down file so you can use any normal mark-down formatting.
 7. Render the blog content on your site. In whichever PHP script you have to render your blog page, you just need to call the Page method to work out which page we want to see and then render() it.
@@ -58,6 +64,8 @@ try {
 
 If you're using an MVC system instead of a basic procedural system, you'll want to put that code wherever you are rendering the blog page. I'm sure you can work it out. And obviously, change whatever you want to in that. If you want to return the content instead of echoing it, use `getDisplay()` instead of `render()`.
 
+Essentially, just include the puddle vendor autoload, build the Config object with your configuration JSON and then work out which page it is and render it.
+
 The `Page::which()` method will determine which page we want to view, e.g. "Blog post 123", or "Most recent posts", or "All posts tagged with `my-tag`", etc...
 
 This is done based on the query string parameters found in the `$_GET` array. 
@@ -78,6 +86,14 @@ In Caddy, I do this like so in the Caddyfile:
 ```caddy
     @blogPath path_regexp blog ^\/blog\/?([^\/]*)\/?([^\/]*)\/?([^\/]*)\/?([^\/]*)\/?(.*)?$
     rewrite @blogPath /blog.php?p1={re.blog.1}&p2={re.blog.2}&p3={re.blog.3}&p4={re.blog.4}
+```
+
+In an Apache htaccess file that would be something like:
+
+```
+Options +FollowSymLinks
+RewriteEngine On
+RewriteRule ^blog/?([^/]*)/?([^/]*)/?([^/]*)/?([^/]*)/?(.*)?$ blog.php?p1=$1&p2=$2&p3=$3&p4=$4 [L,QSA]
 ```
 
 So, apply that rewrite regex to your server, however it's done for your particular server software.
