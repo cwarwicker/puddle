@@ -1,0 +1,8 @@
+<section class="blog-tag-list">
+    <div class="blog-tag-list-heading">Tags</div>
+    {% for tag in tag_list %}
+        <div class="blog-tag-list-item">
+            <div class="blog-tag-list-item-title"><a href="{{ tag.url }}">{{ tag.tag }} ({{ tag.count }})</a></div>
+        </div>
+    {% endfor %}
+</section>

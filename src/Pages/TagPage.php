@@ -6,6 +6,7 @@ use Puddle\Config;
 use Puddle\Page;
 use Puddle\Post;
 use Puddle\PostList;
+use Puddle\TagList;
 
 class TagPage extends Page
 {
@@ -84,7 +85,17 @@ class TagPage extends Page
      * @return string
      */
     public function url(): string {
-        return $this->config->url . '/tag/' . $this->tag;
+        return static::getURL($this->config, $this->tag);
+    }
+
+    /**
+     * Get the url of the tag page for a given tag
+     * @param Config $config
+     * @param string $tag
+     * @return string
+     */
+    public static function getURL(Config $config, string $tag): string {
+        return $config->url . '/tag/' . $tag;
     }
 
     /**

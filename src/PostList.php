@@ -3,6 +3,7 @@
 namespace Puddle;
 
 use Puddle\Pages\RecentPostsPage;
+use Puddle\Pages\TagPage;
 use Twig\Environment;
 
 class PostList
@@ -65,16 +66,17 @@ class PostList
 
         $posts = $this->filterPosts($start);
         $recent = new RecentPostsPage(config: $this->config);
+        $tags = new TagList(config: $this->config);
 
         $data = [
             'url' => $page->url(),
             'posts' => $posts,
             'recent_posts' => $recent->getSidebarPosts(),
+            'tag_list' => $tags->load()->all(),
             'pages' => $totalPages,
             'page' => $pageNumber,
             'title' => $page->title(),
         ];
-
         return $twig->render('list.twig', $data);
 
     }

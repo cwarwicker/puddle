@@ -5,6 +5,7 @@ namespace Puddle\Pages;
 use Puddle\Config;
 use Puddle\Page;
 use Puddle\Post;
+use Puddle\TagList;
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
@@ -79,10 +80,12 @@ class PostPage extends Page
     public function getDisplay(): string {
 
         $recent = new RecentPostsPage(config: $this->config);
+        $tags = new TagList(config: $this->config);
         $data = [
             'url' => $this->config->url,
             'post' => $this->post,
             'recent_posts' => $recent->getSidebarPosts(),
+            'tag_list' => $tags->load()->all(),
         ];
 
         return $this->twig()->render('post.twig', $data);
