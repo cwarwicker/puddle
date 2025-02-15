@@ -62,8 +62,8 @@ class Post
     }
 
     public function description(): string {
-        $patterns = ['/\n/', '/\s+/', '/[^a-z0-9 \.]/i'];
-        $replacements = [' ', ' ', ''];
+        $patterns = ['/\n/', '/\s+/', '/(\[(.*?)\]\((.*?)\))/', '/[^a-z0-9 \.]/i'];
+        $replacements = [' ', ' ', '$2', ''];
         $content = $this->content();
         $content = trim(preg_replace($patterns, $replacements, $content));
         return (strlen($content) > static::DESCRIPTION_LENGTH) ? substr($content, 0, static::DESCRIPTION_LENGTH) . '...' : $content;
